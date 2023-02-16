@@ -1,0 +1,100 @@
+#include<bits/stdc++.h>
+using namespace std;
+
+#define    ff        first
+#define    ss        second
+#define    ll        long long
+#define    w(t)      ll t; cin >> t; while(t--)
+/*------------------------------------------------------------------------------------------------------
+*/
+const int N = 1e5 + 5;
+vector <ll> height(N);
+vector <ll> depth(N);
+vector <ll> sbtreesize(N);
+
+void dfs(ll node, vector <ll> adj[] , vector <ll> &vis){
+  vis[node] = 1;
+  for (auto child : adj[node]){
+    if(!vis[child]){
+      depth[child] = depth[node] + 1; 
+      dfs(child, adj, vis);
+      height[node] = max(height[node], height[child]);
+      sbtreesize[node] += sbtreesize[child];
+    }
+  }
+  sbtreesize[node] += 1;
+  height[node] += 1;
+}
+
+void bfs(ll root, vector <ll> adj[], vector <ll> &vis){
+  queue <ll> q;
+  q.push(root);
+  vis[root] = 1;
+  while(!q.empty()){
+    ll curr = q.front();
+    q.pop();
+    for (auto child : adj[curr]){
+      if(!vis[child]){
+        q.push(child);
+        vis[child] = 1;
+      }
+    }
+  }
+}
+
+void solve(){
+  ll n, m;
+  cin >> n >> m;
+
+  //n -> nodes , m -> edges
+  vector <ll> vis(n + 1);
+  vector <ll> adj[n + 1];
+  for (ll i = 1; i <= m; i++){
+    ll u, v;
+    cin >> u >> v;
+    adj[u].push_back(v);
+    adj[v].push_back(u);
+  }
+  ll ct = 0;
+  //finding the number of connected components
+  //1. using bfs
+  // for (ll i = 1; i <= n; i++){
+  //   if(!vis[i]){
+  //     bfs(i, adj, vis);
+  //     ct++;
+  //   }
+  // }
+  // cout << ct << endl;
+
+  //2.using dfs
+  for (ll i = 1; i <= n; i++){
+    if(!vis[i]){
+      dfs(i, adj, vis);
+      ct++;
+    }
+  }
+  cout << ct << endl;
+  cout << "height" << " :";
+  for (ll i = 1; i <= n; i++){
+    cout << height[i] << " ";
+  }
+  cout << endl;
+  cout << "depth" << " :";
+  for (ll i = 1; i <= n; i++){
+    cout << depth[i] << " ";
+  }
+  cout << endl;
+  cout << "sbtreesize" << " :";
+  for (ll i = 1; i <= n; i++){
+    cout << sbtreesize[i] << " ";
+  }
+  cout << endl;
+}
+
+int main(){
+  ios_base::sync_with_stdio(false);cin.tie(NULL);cout.tie(NULL);
+  // w(t){
+  //   solve();
+  // }
+  solve();
+}
